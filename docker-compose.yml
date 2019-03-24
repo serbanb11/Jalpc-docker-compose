@@ -1,0 +1,34 @@
+version: '3.5'
+
+services:
+  jekyll:
+    image: jekyll/jekyll:builder
+    container_name: jekyll
+    restart: always
+    networks:
+      - buildnet
+    volumes:
+      - "./Jalpc:/srv/jekyll"
+    entrypoint:
+      - jekyll
+      - serve
+
+  nginx:
+    build: ./nginx-lets-encrypt
+    image: broscuta/nginx:stable
+    container_name: nginx
+    restart: unless-stopped
+    networks:
+      - buildnet
+    volumes:
+      - ./nginx-lets-encrypt/nginx.conf:/etc/nginx/nginx.conf
+      - ./lets-encrypt-data/:/etc/letsencrypt/
+    ports:
+      - '80:80'
+      - '443:443'
+
+networks:
+  buildnet:
+    name: buildnet
+    driver: bridge
+
