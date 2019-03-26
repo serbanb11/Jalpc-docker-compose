@@ -35,7 +35,7 @@ services:
     security_opt:
       - no-new-privileges
     healthcheck:
-      test: "wget --max-redirect 0 --spider -S 'http://localhost:8080' 2>&1 | g$
+      test: "wget --max-redirect 0 --spider -S 'http://localhost:8080' 2>&1 | grep 'HTTP/' | awk '{print $$2}' | grep -q '301'"
       interval: 30s
       timeout: 10s
     ulimits:
