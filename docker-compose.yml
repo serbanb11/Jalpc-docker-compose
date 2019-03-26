@@ -2,30 +2,48 @@ version: '3.5'
 
 services:
   jekyll:
-    image: jekyll/jekyll:builder
+    image: jekyll/jekyll:minimal
     container_name: jekyll
-    restart: always
+    restart: on-failure:5 
     networks:
       - buildnet
     volumes:
       - "./Jalpc:/srv/jekyll"
+    security_opt:
+      - no-new-privileges
+    healthcheck:
+      test: "/usr/bin/wget -q -Y off http://localhost:4000 -O /dev/null > /dev/null 2>&1"
+      interval: 30s
+      timeout: 10s
+    ulimits:
+      rtprio: 95
+      memlock: -1
     entrypoint:
       - jekyll
       - serve
 
   nginx:
     build: ./nginx-lets-encrypt
-    image: broscuta/nginx:stable
+    image: blog/nginx:stable
     container_name: nginx
-    restart: unless-stopped
+    restart: on-failure:5 
     networks:
       - buildnet
     volumes:
       - ./nginx-lets-encrypt/nginx.conf:/etc/nginx/nginx.conf
       - ./lets-encrypt-data/:/etc/letsencrypt/
+    security_opt:
+      - no-new-privileges
+    healthcheck:
+      test: "wget --max-redirect 0 --spider -S 'http://localhost:8080' 2>&1 | g$
+      interval: 30s
+      timeout: 10s
+    ulimits:
+      rtprio: 95
+      memlock: -1
     ports:
-      - '80:80'
-      - '443:443'
+      - '0.0.0.0:80:8080'
+      - '0.0.0.0:443:8443'
 
 networks:
   buildnet:

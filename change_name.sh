@@ -30,4 +30,7 @@ sed -i -- "s|url: https.*|url: https://$ARG/|g" Jalpc/_config.yml
 sed -i -- "s|baseurl:.*|#baseurl: /|g" Jalpc/_config.yml
 sed -i -- "s/www.yourdomain.com/$ARG/g" nginx-lets-encrypt/nginx.conf
 sed -i -- "s/yourdomain.com/${ARG#*.}/g" nginx-lets-encrypt/nginx.conf
+sed -i -- "s|https://$host$request_uri;|https://www.test.com$request_uri;|g" nginx-lets-encrypt/nginx.conf
 echo $ARG > Jalpc/CNAME
+
+echo -e "\e[00;33m### CHANGE COMPLETE ####################################\e[00m"
